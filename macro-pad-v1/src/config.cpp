@@ -1,42 +1,101 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
 #include "headers/config.h"
+#include "hardware/flash.h"
+
+
+// Check config size
+static_assert(sizeof(Config) <= CONFIG_SIZE, "Config too large!");
+
+
+// - (internal) Function declarations -
+static uint32_t crc32(const void* data, size_t length);
+static uint32_t calculateConfigCrc(const Config* config);
 
 
 // - Variables -
 
 Config currentConfig;
 
-// Pointer to config in flash (read only via XIP)
+// Pointer to the config in flash (read only via XIP)
 static const Config* flashConfig = (const Config*)(XIP_BASE + CONFIG_OFFSET);
 
 // Default config
 static const Config defaultConfig = {
   .crc = 0,
   .version = CONFIG_VERSION,
+  .deviceName = "[Macro]Pad v1",
   .activeProfile = 0,
   .activeSubprofile = 0,
   .profiles = {{
-    .name = "Default",
+    .name = "Blender",
     .subprofileCount = 1,
     .subprofiles = {{
-      .name = "Main",
+      .name = "Viewport",
       .encoderCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_INCREMENT },
       .encoderCCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_DECREMENT },
       .encoderPress = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_MUTE },
       .buttons = {
-        { .onPress = { ActionType::KEY, 0, 0x04 } },
-        { .onPress = { ActionType::KEY, 0, 0x3F } }
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_1 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_3 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_7 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_1 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_2 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_3 } }
       }
     }}
   }}
+};
+
+
+// - Memory -
+
+void saveConfig(const Config* config) {
+  // Can only write blocks of 256 bytes
+  static uint8_t buf[CONFIG_SIZE];
+  memset(buf, 0xFF, sizeof(buf));
+  memcpy(buf, config, sizeof(Config));
+
+  // Disable interrupts while writing in flash memory (can't run code from flash while writing in it, so we need to disable interrupts because they could be called at any time)
+  uint32_t ints = save_and_disable_interrupts();
+  flash_range_erase(CONFIG_OFFSET, CONFIG_SIZE);
+  flash_range_program(CONFIG_OFFSET, buf, CONFIG_SIZE);
+  restore_interrupts(ints);
+}
+
+Config loadConfig() {
+  // Get the config from flash (copy it into a new Config (savedConfig))
+  Config savedConfig;
+  memcpy(&savedConfig, flashConfig, sizeof(Config));
+
+  // Validate config (if wrong crc or different version -> load default)
+  if (savedConfig.crc != calculateConfigCrc(&savedConfig) || savedConfig.version != CONFIG_VERSION) {
+    savedConfig = defaultConfig; // Overwrite config with default
+    savedConfig.crc = calculateConfigCrc(&savedConfig); // Calculate the crc for the default config
+
+    // Save the "new" default config in memory (if not equal)
+    if (memcmp(flashConfig, &savedConfig, sizeof(Config)) != 0) {
+      saveConfig(&savedConfig);
+    }
+  }
+
+  return savedConfig;
 }
 
 
-// - Functions -
+// - Config -
 
-// Check data integrity
-uint32_t crc32(const void* data, size_t length) {
+static uint32_t calculateConfigCrc(const Config* config) {
+  // Skip the crc (start is a pointer to the memory address of the second field of config (version) (pointer to config (= start of the struct) + size of crc field (uint32_t))
+  const uint8_t* start = (const uint8_t*)config + sizeof(uint32_t);
+
+  // Calculate crc for config (without crc)
+  return crc32(start, sizeof(Config) - sizeof(uint32_t));
+}
+
+
+// crc32 (Check data integrity)
+static uint32_t crc32(const void* data, size_t length) {
   const uint8_t* p = (const uint8_t*)data;
   uint32_t crc = 0xFFFFFFFF;
 
@@ -50,7 +109,7 @@ uint32_t crc32(const void* data, size_t length) {
       // 0xEDB88320 -> crc32 polynomial reflected (because we use LSB instead of MSB)
 
       // (crc & 1) -> 1 is 0x00000001, with the & (AND), extract the LSB (the "last bit")
-      // the '-' transform the value, 1 becomes -1 (0xFFFFFFFF), 0 remains 0 (0x00000000)
+      // the '-' transform the value, 1 becomes -1 (since is unsigned, -1 gives the max value (0xFFFFFFFF)), 0 remains 0 (0x00000000)
 
       // the & (AND) after the polynomial is used as an if (if the LSB was 1, so now is -1 (0xFFFFFFFF) -> the XOR is "applied", since the polynomial pass the &, if the LSB was 0, the polynomial & 0 = 0 -> XOR with 0)
       // so if the bit was 1 -> "compensate" using the XOR with the polynomial

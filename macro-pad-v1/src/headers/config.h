@@ -12,22 +12,24 @@
 // - Definitions -
 
 #define FLASH_SIZE_BYTES (2 * 1024 * 1024) // 2 MB (flash memory size)
-#define CONFIG_SIZE 4096 // 4 KB
+#define CONFIG_SIZE 4096 // 4 KB (multiple of 256 bytes)
 #define CONFIG_OFFSET (FLASH_SIZE_BYTES - CONFIG_SIZE) // Last page (relative to the start of the flash memory)
 
-#define CONFIG_VERSION 1 // When changing the config structure -> change this value
+#define CONFIG_VERSION 1 // When changing the config structure (even PROFILE/SUBPROFILE/BUTTON _COUNT) -> change this value
 
 
 // - Types -
 
+#pragma pack(push, 1) // Pack (avoid padding)
 struct Config {
   uint32_t crc;
   uint8_t version;
-  char deviceName[32]; // ?
+  char deviceName[32];
   uint8_t activeProfile;
   uint8_t activeSubprofile;
   Profile profiles[PROFILE_COUNT];
 };
+#pragma pack(pop)
 
 
 // - Global Variables -
@@ -37,7 +39,5 @@ extern Config currentConfig;
 
 // - Function declarations -
 
-uint32_t crc32(const void* data, size_t length);
-uint32_t configCrc(const Config* cfg);
 Config loadConfig();
-void saveConfig(const Config* cfg);
+void saveConfig(const Config* config);
