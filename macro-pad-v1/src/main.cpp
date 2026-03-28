@@ -13,8 +13,9 @@
 // TODO: aggiungere feature flags e impostaizioni (tipo numero profili/sottoprofili, ecc. -> però se cambiano (es. un profilo in più) vanno "aggiornati manualmente" altrimenti il crc risulta diverso e vengono sovrascritti con quelli di default) del config (personalizzabili) per ottimizzare un po' (es. se non ci sono controllo consumer, non inviare mai il report (forse già così com'è può andare bene))
 
 
-// - Setup -
+// TODO: trova modo di settare nome dispositivo e produttore
 
+// - Setup -
 
 void setup() {
   // Init TinyUSB
