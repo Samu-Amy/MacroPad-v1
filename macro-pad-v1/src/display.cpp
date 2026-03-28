@@ -24,13 +24,6 @@ void updateDisplay() { // TODO: aggiungi struct con dati da mostrare (oppure pun
 
   snprintf(buf, sizeof(buf), "%.15s - %.15s", currentProfile.name, currentProfile.subprofiles[currentConfig.activeSubprofile].name); // %.15s so it only reads 15 chars (in case of missing '\0' as 16th char, it doesn't continue to read values)
   u8g2.drawStr(4, 8, buf);
-  
-  // [DEBUG]
-  if (!usbReady) {
-    u8g2.drawStr(48, 64, "USB not ready");
-  } else {
-    u8g2.drawStr(48, 64, "USB ready");
-  }
 
   u8g2.sendBuffer();
   // TODO: usare millis per non scrivere sul display ad ogni iterazione?
