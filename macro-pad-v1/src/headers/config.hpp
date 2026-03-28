@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-#include "device.h"
+#include "device.hpp"
 
 
 /*
@@ -9,7 +9,7 @@
 */
 
 
-// - Definitions -
+// ----- DEFINITIONS -----
 
 #define FLASH_SIZE_BYTES (2 * 1024 * 1024) // 2 MB (flash memory size)
 #define CONFIG_SIZE 4096 // 4 KB (multiple of 256 bytes)
@@ -18,7 +18,7 @@
 #define CONFIG_VERSION 1 // When changing the config structure (even PROFILE/SUBPROFILE/BUTTON _COUNT) -> change this value
 
 
-// - Types -
+// ----- TYPES -----
 
 #pragma pack(push, 1) // Pack (avoid padding)
 struct Config {
@@ -32,12 +32,12 @@ struct Config {
 #pragma pack(pop)
 
 
-// - Global Variables -
+// ----- VARIABLES -----
 
 extern Config currentConfig;
 
 
-// - Function declarations -
+// ----- FUNCTION DECLARATIONS -----
 
 Config loadConfig();
 void saveConfig(const Config* config);

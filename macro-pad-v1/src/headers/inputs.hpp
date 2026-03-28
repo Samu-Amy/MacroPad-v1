@@ -7,11 +7,12 @@
 */
 
 
-// - Definitions -
+// ----- DEFINITIONS -----
 
 // Buttons
 #define btn1 1
 #define btn2 0
+
 
 // Encoder
 #define eClk 6
@@ -19,7 +20,12 @@
 #define eSw 8
 
 
-// - Types -
+// ----- TYPES -----
+
+struct MatrixBtn {
+  uint8_t pin;    // hardware pin
+  uint8_t keymapIdx;  // index in the keymap
+};
 
 enum class EncoderMode: uint8_t {
   CW = 0,
@@ -28,7 +34,13 @@ enum class EncoderMode: uint8_t {
 };
 
 
-// - Function declarations -
+// ----- VARIABLES -----
+
+extern MatrixBtn buttons[2];
+
+
+// ----- FUNCTION DECLARATIONS -----
+
 void readInputs();
-void setKeycode(uint8_t keycode);
+// void setKeycode(uint8_t keycode);
 EncoderMode readEncoder();

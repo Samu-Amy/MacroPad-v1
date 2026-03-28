@@ -1,8 +1,11 @@
 #include <Arduino.h>
-#include "headers/hid.h"
+#include <Adafruit_TinyUSB.h>
+#include "headers/hid.hpp"
 
-#include "headers/device.h"
+#include "headers/device.hpp"
 
+
+// ----- VARIABLES -----
 
 // HID Descriptor
 uint8_t const desc_hid_report[] = {
@@ -58,51 +61,26 @@ uint8_t const desc_hid_report[] = {
   HID_COLLECTION_END,
 
   // - Report 3: software communication -
-  HID_USAGE_PAGE(HID_USAGE_PAGE_VENDOR),
-  HID_USAGE(0x01),
-  HID_COLLECTION(HID_COLLECTION_APPLICATION),
-    HID_REPORT_ID(3)
+  // HID_USAGE_PAGE_N(0xFF00, 2), //HID_USAGE_PAGE_N(HID_USAGE_PAGE_VENDOR, 2),
+  // HID_USAGE(0x01),
+  // HID_COLLECTION(HID_COLLECTION_APPLICATION),
+  //   HID_REPORT_ID(3)
 
-    // TODO: definisci formato
+  //   // TODO: definisci formato
 
-  HID_COLLECTION_END
+  // HID_COLLECTION_END
 };
 
-// TODO: poi in rust:
-// device.write(&[3u8, /* dati config */])?;  // byte 0 = report ID
-
-// // Read response
-// let mut buf = [0u8; 65];
-// device.read(&mut buf)?;
-
-
 // USB HID
-Adafruit_USBD_HID usbHid(desc_hid_report,         // descriptor HID
-                         sizeof(desc_hid_report), // dimensione descriptor
-                         HID_ITF_PROTOCOL_NONE,   // protocollo (mouse/tastiera/none) // TODO: cambia
-                         POLLING_INTERVAL,         // polling interval (ms)
-                         false                    // usa endpoint OUT
-                       );
+Adafruit_USBD_HID usbHid(
+  desc_hid_report,         // descriptor HID
+  sizeof(desc_hid_report), // dimensione descriptor
+  HID_ITF_PROTOCOL_NONE,   // protocollo (mouse/tastiera/none) // TODO: cambia
+  POLLING_INTERVAL,        // polling interval (ms)
+  false                    // usa endpoint OUT
+);
 
-
-// --- Esempi di utilizzo ---
-
-// // Tasto singolo (es. F5 = 0x3E)
-// keyboardReport_t kbdReport = {0};
-// kbdReport.keycodes[0] = 0x3E;
-// usbHid.sendReport(1, &kbdReport, sizeof(kbdReport));
-// // rilascio:
-// memset(&kbdReport, 0, sizeof(kbdReport));
-// usbHid.sendReport(1, &kbdReport, sizeof(kbdReport));
-
-// // Combinazione Ctrl+Z
-// kbdReport.modifier = 0x01; // LCtrl
-// kbdReport.keycodes[0] = 0x1D; // Z
-// usbHid.sendReport(1, &kbdReport, sizeof(kbdReport));
-
-// // Volume su (encoder in senso orario)
-// consumerReport_t cnsReport = { 0x00E9 }; // Volume Increment
-// usbHid.sendReport(2, &cnsReport, sizeof(cnsReport));
-// // rilascio obbligatorio per Consumer:
-// cnsReport.usage = 0x0000;
-// usbHid.sendReport(2, &cnsReport, sizeof(cnsReport));
+// Reports
+keyboardReport_t keyboardReport = {};
+consumerReport_t controlsReport = {};
+communicationReport_t communicationReport = {};

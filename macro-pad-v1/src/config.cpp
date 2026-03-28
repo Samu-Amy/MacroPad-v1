@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
-#include "headers/config.h"
 #include "hardware/flash.h"
+#include "headers/config.hpp"
+#include "headers/device.hpp"
 
 
 // Check config size
@@ -13,9 +14,9 @@ static uint32_t crc32(const void* data, size_t length);
 static uint32_t calculateConfigCrc(const Config* config);
 
 
-// - Variables -
+// ----- VARIABLES -----
 
-Config currentConfig;
+Config currentConfig = {};
 
 // Pointer to the config in flash (read only via XIP)
 static const Config* flashConfig = (const Config*)(XIP_BASE + CONFIG_OFFSET);
@@ -36,9 +37,9 @@ static const Config defaultConfig = {
       .encoderCCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_DECREMENT },
       .encoderPress = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_MUTE },
       .buttons = {
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_1 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_3 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_7 } },
+        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_1 } },
+        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_3 } },
+        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_7 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_1 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_2 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_3 } }
@@ -48,11 +49,13 @@ static const Config defaultConfig = {
 };
 
 
+// ----- FUNCTIONS -----
+
 // - Memory -
 
 void saveConfig(const Config* config) {
   // Can only write blocks of 256 bytes
-  static uint8_t buf[CONFIG_SIZE];
+  static uint8_t buf[CONFIG_SIZE]; // TODO: usare wear leveling (magari tramite librerie)?
   memset(buf, 0xFF, sizeof(buf));
   memcpy(buf, config, sizeof(Config));
 

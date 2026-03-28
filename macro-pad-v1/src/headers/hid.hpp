@@ -2,18 +2,20 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
 
+#include "headers/device.hpp"
+
 
 /*
   The data of the device, used in config.h
 */
 
 
-// - Definitions -
+// ----- DEFINITIONS -----
 
 #define POLLING_INTERVAL 10 //ms
 
 
-// - Types -
+// ----- TYPES -----
 
 // Reports
 typedef struct TU_ATTR_PACKED {
@@ -31,6 +33,9 @@ typedef struct TU_ATTR_PACKED {
 } communicationReport_t;
 
 
-// - Variables -
+// ----- VARIABLES -----
 
 extern Adafruit_USBD_HID usbHid;
+extern keyboardReport_t keyboardReport;
+extern consumerReport_t controlsReport;
+extern communicationReport_t communicationReport;
