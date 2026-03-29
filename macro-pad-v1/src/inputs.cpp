@@ -30,7 +30,7 @@ void readInputs() {
   // }
 
   for (const MatrixBtn &button : buttons) {
-    if (!digitalRead(button.pin)) { // TODO: fai debounce e controllo press, double press, hold, release (uas oneButton?)
+    if (!digitalRead(button.pin) && currentKeycodesIndex < BUTTON_COUNT) { // TODO: fai debounce e controllo press, double press, hold, release (uas oneButton?)
       keyboardReport.keycodes[currentKeycodesIndex++] = currentConfig.profiles[currentConfig.activeProfile].subprofiles[currentConfig.activeSubprofile].buttons[button.keymapIdx].onPress.value;
     }
   }
