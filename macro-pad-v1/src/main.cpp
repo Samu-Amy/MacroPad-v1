@@ -32,10 +32,13 @@ void setup() {
   
   // Init display
   u8g2.begin();
-  showLoadingScreen();
+  initScreen();
 
   // Load config
   currentConfig = loadConfig();
+
+  // Update data for display
+  updateAllDisplayBuffers();
 }
 
 

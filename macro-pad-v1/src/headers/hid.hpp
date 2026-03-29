@@ -29,7 +29,7 @@ typedef struct TU_ATTR_PACKED {
 } consumerReport_t;
 
 typedef struct TU_ATTR_PACKED {
-  // TODO: usa formato per comunicazione (id 3)
+  // TODO: usa formato per comunicazione (id 3) - magari si possono anche fare "macro" tipo apri software o altro comunicando con il software
 } communicationReport_t;
 
 
