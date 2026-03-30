@@ -25,6 +25,9 @@ static const Config* flashConfig = (const Config*)(XIP_BASE + CONFIG_OFFSET);
 static const Config defaultConfig = {
   .crc = 0,
   .version = CONFIG_VERSION,
+  .settings = {
+    .flags = 0 //? Per settare valori: Settings::toMask(SettingsFlag::DISPLAY__PROFILE_INVERTED) | Settings::toMask(SettingsFlag::SETTING_2)
+  },
   .deviceName = "[Macro]Pad v1",
   .activeProfile = 0,
   .activeSubprofile = 0,

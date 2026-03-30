@@ -41,11 +41,17 @@ void updateDisplay() { // TODO: aggiungi struct con dati da mostrare (oppure pun
   u8g2.clearBuffer();
   
   // - Profile -
-  u8g2.drawBox(0, 0, 128, 14);
-  u8g2.setDrawColor(0); // Invert color
-  drawCentered(12, profileBuf);
-  
-  u8g2.setDrawColor(1);
+  if (currentConfig.settings.has(SettingsFlag::DISPLAY__PROFILE_INVERTED)) {
+    // Inverted
+    u8g2.drawBox(0, 0, 128, 14);
+    u8g2.setDrawColor(0); // Invert color
+    drawCentered(12, profileBuf);
+    u8g2.setDrawColor(1);
+  } else {
+    // Normal
+    drawCentered(12, profileBuf);
+    u8g2.drawLine(0, 14, 128, 14);
+  }
   
   // - Subprofile -
   u8g2.drawStr(4, 28, subprofileBuf);
@@ -53,24 +59,20 @@ void updateDisplay() { // TODO: aggiungi struct con dati da mostrare (oppure pun
   // - Data -
 
   u8g2.sendBuffer();
-  // TODO: usare millis per non scrivere sul display ad ogni iterazione?
 }
 
 // - Utils -
 
 void updateAllDisplayBuffers() {
-  Profile& currentProfile = currentConfig.profiles[currentConfig.activeProfile];
-
   // Update profile buffer
-  snprintf(profileBuf, sizeof(profileBuf), "%.15s", currentProfile.name); // %.15s so it only reads 15 chars (in case of missing '\0' as 16th char, it doesn't continue to read values)
+  snprintf(profileBuf, sizeof(profileBuf), "%.15s", currentConfig.getActiveProfile().name); // %.15s so it only reads 15 chars (in case of missing '\0' as 16th char, it doesn't continue to read values)
 
-  updateSubprofileDisplayBuffer(currentProfile);
+  updateSubprofileDisplayBuffer();
 }
 
-void updateSubprofileDisplayBuffer(Profile& currentProfile) {
-
+void updateSubprofileDisplayBuffer() {
   // Update subprofile buffer
-  snprintf(subprofileBuf, sizeof(subprofileBuf), "%.15s", currentProfile.subprofiles[currentConfig.activeSubprofile].name);
+  snprintf(subprofileBuf, sizeof(subprofileBuf), "%.15s", currentConfig.getActiveSubprofile().name);
 
   // Update data
 }

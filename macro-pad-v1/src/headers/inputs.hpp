@@ -9,15 +9,10 @@
 
 // ----- DEFINITIONS -----
 
-// Buttons
-#define btn1 1
-#define btn2 0
-
-
 // Encoder
 #define eClk 6
 #define eDt 7
-#define eSw 8
+#define eSwitch 8
 
 
 // ----- TYPES -----

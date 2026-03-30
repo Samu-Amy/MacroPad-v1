@@ -24,10 +24,14 @@
 struct Config {
   uint32_t crc;
   uint8_t version;
+  Settings settings;
   char deviceName[32];
   uint8_t activeProfile;
   uint8_t activeSubprofile;
   Profile profiles[PROFILE_COUNT];
+
+  inline Profile& getActiveProfile() { return profiles[activeProfile % PROFILE_COUNT]; } // Prevent overflow with % check
+  inline Subprofile& getActiveSubprofile() { return getActiveProfile().subprofiles[activeSubprofile % SUBPROFILE_COUNT]; }
 };
 #pragma pack(pop)
 

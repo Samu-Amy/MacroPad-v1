@@ -20,6 +20,6 @@ void initScreen();
 void updateDisplay();
 
 void updateAllDisplayBuffers();
-void updateSubprofileDisplayBuffer(Profile& currentProfile);
+void updateSubprofileDisplayBuffer();
 
 void drawCentered(u8g2_uint_t y, const char* text);

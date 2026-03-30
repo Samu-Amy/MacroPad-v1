@@ -29,6 +29,10 @@ void setup() {
   for (const MatrixBtn &button : buttons) {
     pinMode(button.pin, INPUT_PULLUP);
   }
+
+  pinMode(eClk, INPUT_PULLUP);
+  pinMode(eDt, INPUT_PULLUP);
+  pinMode(eSwitch, INPUT_PULLUP);
   
   // Init display
   u8g2.begin();
@@ -91,7 +95,7 @@ void loop() {
 
   // --- DISPLAY ---
 
-  static uint32_t lastDisplayUpdate = 0;
+  static uint32_t lastDisplayUpdate = 0; // TODO: fare funzione per applicare millis ad una funzione o blocco di codice (?)
   if (millis() - lastDisplayUpdate > 50) {
     updateDisplay();
     lastDisplayUpdate = millis();
