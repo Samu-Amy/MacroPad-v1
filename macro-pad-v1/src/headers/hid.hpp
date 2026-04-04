@@ -12,10 +12,20 @@
 
 // ----- DEFINITIONS -----
 
-#define POLLING_INTERVAL 10 //ms
+constexpr uint8_t POLLING_INTERVAL = 10; //ms
 
 
 // ----- TYPES -----
+
+// Enums
+enum class Command: uint8_t { // TODO: potrebbero essere da modificare
+  GET_CONFIG = 0x01,
+  SET_CONFIG,
+  GET_INFO,
+  REBOOT_UF2,
+  AKC,
+  ERROR
+};
 
 // Reports
 typedef struct TU_ATTR_PACKED {
@@ -28,8 +38,12 @@ typedef struct TU_ATTR_PACKED {
   uint16_t usage; // Consumer usage (0x0000 -> no keys)
 } consumerReport_t;
 
-typedef struct TU_ATTR_PACKED {
-  // TODO: usa formato per comunicazione (id 3) - magari si possono anche fare "macro" tipo apri software o altro comunicando con il software
+typedef struct TU_ATTR_PACKED { // TODO: magari si possono anche fare "macro" tipo apri software o altro comunicando con il software
+  Command command;
+  uint8_t packet_index;
+  uint8_t packet_total;
+  uint8_t data_length;
+  uint8_t data[59];
 } communicationReport_t;
 
 

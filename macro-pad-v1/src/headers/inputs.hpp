@@ -10,9 +10,9 @@
 // ----- DEFINITIONS -----
 
 // Encoder
-#define eClk 6
-#define eDt 7
-#define eSwitch 8
+constexpr pin_size_t eClk = 6;
+constexpr pin_size_t eDt = 7;
+constexpr pin_size_t eSwitch = 8;
 
 
 // ----- TYPES -----

@@ -10,9 +10,9 @@
 // ----- DEFINITIONS -----
 
 // TODO: rendere personalizzabili questi valori (magari definendo un valore massimo (es. CONFIG_SIZE -> 4KB) per lo spazio utilizzabile e facendo un calcolo dello spazio occupato da questi valori, dando la possibilità di "distribuire" lo spazio che occupano in profili, sottoprofili, dimensione pool e altro)
-#define PROFILE_COUNT 4
-#define SUBPROFILE_COUNT 4
-#define BUTTON_COUNT 6
+constexpr uint8_t PROFILE_COUNT = 4;
+constexpr uint8_t SUBPROFILE_COUNT = 4;
+constexpr uint8_t BUTTON_COUNT = 6;
 
 
 // ----- TYPES -----

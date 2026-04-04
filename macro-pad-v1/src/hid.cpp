@@ -54,7 +54,7 @@ uint8_t const desc_hid_report[] = {
     HID_USAGE_MAX_N(0x29C, 2),
     HID_LOGICAL_MIN(0x00),
     HID_LOGICAL_MAX_N(0x29C, 2),
-    HID_REPORT_SIZE(16), // 2 Bytes
+    HID_REPORT_SIZE(16), // 16 bits per field
     HID_REPORT_COUNT(1),
     HID_INPUT(HID_DATA | HID_ARRAY | HID_ABSOLUTE),
 
@@ -62,22 +62,36 @@ uint8_t const desc_hid_report[] = {
 
   // - Report 3: software communication -
   HID_USAGE_PAGE_N(HID_USAGE_PAGE_VENDOR, 2), // HID_USAGE_PAGE_N(0xFF00, 2), // TODO: se non funziona con "HID_USAGE_PAGE_VENDOR", usa il valore direttamente ("0xFF00")
-  // HID_USAGE(0x01),
-  // HID_COLLECTION(HID_COLLECTION_APPLICATION),
-  //   HID_REPORT_ID(3)
+  HID_USAGE(0x01),
+  HID_COLLECTION(HID_COLLECTION_APPLICATION),
+    HID_REPORT_ID(3)
 
-  //   // TODO: definisci formato
+    // Input (device -> software)
+    HID_USAGE(0x02),
+    HID_LOGICAL_MIN(0x00),
+    HID_LOGICAL_MAX_N(0xFF, 2),
+    HID_REPORT_SIZE(8), // 8 bits per field
+    HID_REPORT_COUNT(63), // 63 Bytes
+    HID_INPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
+    
+    // Output (software -> device)
+    HID_USAGE(0x03),
+    HID_LOGICAL_MIN(0x00),
+    HID_LOGICAL_MAX_N(0xFF, 2),
+    HID_REPORT_SIZE(8), // 8 bits per field
+    HID_REPORT_COUNT(63), // 63 Bytes
+    HID_INPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
 
-  // HID_COLLECTION_END
+  HID_COLLECTION_END
 };
 
 // USB HID
 Adafruit_USBD_HID usbHid(
-  desc_hid_report,         // descriptor HID
-  sizeof(desc_hid_report), // dimensione descriptor
-  HID_ITF_PROTOCOL_NONE,   // protocollo (mouse/tastiera/none) // TODO: cambia
-  POLLING_INTERVAL,        // polling interval (ms)
-  false                    // usa endpoint OUT
+  desc_hid_report,          // descriptor HID
+  sizeof(desc_hid_report),  // descriptor size
+  HID_ITF_PROTOCOL_NONE,    // boot protocol (mouse/keyboard/none) -> to use mouse/keyboard in boot - since this device has a composite descriptor (3 different reports), can't use mouse/keyboard
+  POLLING_INTERVAL,         // polling interval (ms)
+  true                      // use endpoint OUT
 );
 
 // Reports

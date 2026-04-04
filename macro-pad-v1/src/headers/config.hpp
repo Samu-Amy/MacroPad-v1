@@ -11,11 +11,11 @@
 
 // ----- DEFINITIONS -----
 
-#define FLASH_SIZE_BYTES (2 * 1024 * 1024) // 2 MB (flash memory size)
-#define CONFIG_SIZE 4096 // 4 KB (multiple of 256 bytes)
-#define CONFIG_OFFSET (FLASH_SIZE_BYTES - CONFIG_SIZE) // Last page (relative to the start of the flash memory)
+constexpr uint16_t FLASH_SIZE_BYTES = (2 * 1024 * 1024); // 2 MB (flash memory size)
+constexpr uint16_t CONFIG_SIZE = 4096; // 4 KB (multiple of 256 bytes)
+constexpr uint16_t CONFIG_OFFSET = (FLASH_SIZE_BYTES - CONFIG_SIZE); // Last page (relative to the start of the flash memory)
 
-#define CONFIG_VERSION 1 // When changing the config structure (even PROFILE/SUBPROFILE/BUTTON _COUNT) -> change this value
+constexpr uint8_t CONFIG_VERSION = 1; // When changing the config structure (even PROFILE/SUBPROFILE/BUTTON _COUNT) -> change this value
 
 
 // ----- TYPES -----
