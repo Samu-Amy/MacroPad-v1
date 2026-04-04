@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
-#include "headers/hid.hpp"
 
+#include "headers/hid.hpp"
 #include "headers/device.hpp"
 
 
@@ -61,7 +61,7 @@ uint8_t const desc_hid_report[] = {
   HID_COLLECTION_END,
 
   // - Report 3: software communication -
-  // HID_USAGE_PAGE_N(0xFF00, 2), //HID_USAGE_PAGE_N(HID_USAGE_PAGE_VENDOR, 2),
+  HID_USAGE_PAGE_N(HID_USAGE_PAGE_VENDOR, 2), // HID_USAGE_PAGE_N(0xFF00, 2), // TODO: se non funziona con "HID_USAGE_PAGE_VENDOR", usa il valore direttamente ("0xFF00")
   // HID_USAGE(0x01),
   // HID_COLLECTION(HID_COLLECTION_APPLICATION),
   //   HID_REPORT_ID(3)

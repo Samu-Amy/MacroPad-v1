@@ -43,6 +43,8 @@ void setup() {
 
   // Update data for display
   updateAllDisplayBuffers();
+
+  // TODO: invia report con dati dispositivo per la connessione con il software (ed eventualmente finché non è collegato, invia il report ogni tot tempo ed ascolta per report di "richiesta connession" inviati dal software)
 }
 
 
