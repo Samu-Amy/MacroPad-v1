@@ -1,7 +1,8 @@
 #include <Arduino.h>
-#include "headers/inputs.hpp"
-#include "headers/hid.hpp"
-#include "headers/config.hpp"
+
+#include "inputs.hpp"
+#include "hid.hpp"
+#include "config.hpp"
 
 
 // ----- VARIABLES -----

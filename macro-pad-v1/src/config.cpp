@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
 #include "hardware/flash.h"
-#include "headers/config.hpp"
-#include "headers/device.hpp"
+
+#include "config.hpp"
+#include "device.hpp"
 
 
 // Check config size

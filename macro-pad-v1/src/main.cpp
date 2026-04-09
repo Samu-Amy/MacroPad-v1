@@ -1,12 +1,12 @@
 #include <Arduino.h>
-
 #include <U8g2lib.h>
 #include <Wire.h>
-#include "headers/device.hpp"
-#include "headers/hid.hpp"
-#include "headers/config.hpp"
-#include "headers/inputs.hpp"
-#include "headers/display.hpp"
+
+#include "device.hpp"
+#include "hid.hpp"
+#include "config.hpp"
+#include "inputs.hpp"
+#include "display.hpp"
 
 
 // (forse no): fare firmware con solo parti che servono in base a cosa si usa (magari nel software avere dei flag per le varie cose (es. keys, consumer, ecc.) da usare per poter "ottimizzare" il firmware (eventualmente facendo un flash del firmware settando dei "#define" iniziali, usati poi con #if prima di compilarlo (ma serve compilazione)))

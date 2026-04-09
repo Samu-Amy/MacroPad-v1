@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
 
-#include "headers/device.hpp"
+#include "device.hpp"
 
 
 /*

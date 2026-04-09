@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
-#include "headers/device.hpp"
-#include "headers/hid.hpp"
+
+#include "device.hpp"
+#include "hid.hpp"
 
 
 // ----- FUNCTIONS -----

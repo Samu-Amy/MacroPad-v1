@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include "headers/display.hpp"
 
-#include "headers/config.hpp"
+#include "display.hpp"
+#include "config.hpp"
 
 // TODO: crea logo ed altre cose usando testi, linee ed altre forme, poi animali modificando i valori (tra cui la posizione)
 

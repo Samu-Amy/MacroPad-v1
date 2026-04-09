@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
 
-#include "headers/hid.hpp"
-#include "headers/device.hpp"
+#include "hid.hpp"
+#include "device.hpp"
 
 
 // ----- VARIABLES -----
