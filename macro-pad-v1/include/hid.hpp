@@ -10,14 +10,18 @@
 */
 
 
-// ----- DEFINITIONS -----
+// ----- CONSTANTS -----
 
 constexpr uint8_t POLLING_INTERVAL = 10; //ms
+
+// Number of Keys that can be pressed at the same time
+constexpr uint8_t BUTTON_COUNT = 6;
 
 
 // ----- TYPES -----
 
-// Enums
+// - Enums -
+
 enum class Command: uint8_t { // TODO: potrebbero essere da modificare
   GET_CONFIG = 0x01,
   SET_CONFIG,
@@ -27,7 +31,9 @@ enum class Command: uint8_t { // TODO: potrebbero essere da modificare
   ERROR
 };
 
-// Reports
+
+// - Reports -
+
 typedef struct TU_ATTR_PACKED {
   uint8_t modifier; // bitmask
   uint8_t reserved; // always 0

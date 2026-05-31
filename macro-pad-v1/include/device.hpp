@@ -7,17 +7,22 @@
 */
 
 
-// ----- DEFINITIONS -----
+// ----- CONSTANTS -----
 
 // TODO: rendere personalizzabili questi valori (magari definendo un valore massimo (es. CONFIG_SIZE -> 4KB) per lo spazio utilizzabile e facendo un calcolo dello spazio occupato da questi valori, dando la possibilità di "distribuire" lo spazio che occupano in profili, sottoprofili, dimensione pool e altro)
 constexpr uint8_t PROFILE_COUNT = 4;
 constexpr uint8_t SUBPROFILE_COUNT = 4;
-constexpr uint8_t BUTTON_COUNT = 6;
+
+
+// ----- VARIABLES -----
+
+extern volatile bool numLockActive;
 
 
 // ----- TYPES -----
 
-// Enums
+// - Enums -
+
 enum class ActionType: uint8_t {
   NONE = 0,
   KEY,
@@ -42,7 +47,8 @@ enum class SettingsFlag: uint8_t {
 
 // TODO: si possono fare layer momentanei facendo lo swicth di profile/subprofile a hold/release (salvando in memoria il vecchio profile/subprofile)
 
-// Structs
+// - Structs -
+
 #pragma pack(push, 1) // Pack all structs (1 -> set max alignment to 1) - if not packed, the crc32 function could return different data because of "garbage" (random data) in empty bytes (padding), so in loadConfig would overwrite with default config
 
 // HID
@@ -107,4 +113,5 @@ struct Settings {
 // ----- FUNCTIONS -----
 
 void initDevice();
-void enableNumLock();
+void onHidSetReport(uint8_t reportId, hid_report_type_t reportType, uint8_t const* buffer, uint16_t bufSize);
+void ensureNumLock();

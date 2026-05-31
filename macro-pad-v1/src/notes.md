@@ -19,9 +19,10 @@ for every field:
 if offset % alignment == 0 -> ok (no padding) else padding
 
 es. (in Profile):
-name -> offset = 0, alignment = 1 Byte (char) -> ok
-subprofileCount -> offset = 16, alignment = 1 Byte -> ok
-subprofiles -> offset = 17, alignment =
+
+- name -> offset = 0, alignment = 1 Byte (char) -> ok
+- subprofileCount -> offset = 16, alignment = 1 Byte -> ok
+- subprofiles -> offset = 17, alignment =
 
 # Notes:
 

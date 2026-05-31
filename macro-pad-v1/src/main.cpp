@@ -10,17 +10,21 @@
 
 
 // (forse no): fare firmware con solo parti che servono in base a cosa si usa (magari nel software avere dei flag per le varie cose (es. keys, consumer, ecc.) da usare per poter "ottimizzare" il firmware (eventualmente facendo un flash del firmware settando dei "#define" iniziali, usati poi con #if prima di compilarlo (ma serve compilazione)))
-// TODO: aggiungere feature flags e impostaizioni (tipo numero profili/sottoprofili, ecc. -> però se cambiano (es. un profilo in più) vanno "aggiornati manualmente" altrimenti il crc risulta diverso e vengono sovrascritti con quelli di default) del config (personalizzabili) per ottimizzare un po' (es. se non ci sono controllo consumer, non inviare mai il report (forse già così com'è può andare bene))
+// TODO: aggiungere feature flags e impostazioni (tipo numero profili/sottoprofili, ecc. -> però se cambiano (es. un profilo in più) vanno "aggiornati manualmente" altrimenti il crc risulta diverso e vengono sovrascritti con quelli di default) del config (personalizzabili) per ottimizzare un po' (es. se non ci sono controllo consumer, non inviare mai il report (forse già così com'è può andare bene))
 
 
 // TODO: trova modo di settare nome dispositivo e produttore
 
 // - Setup -
 
-void setup() {
+void setup()
+{
   // Init TinyUSB
   USBDevice.begin(0);
   usbHid.begin();
+
+  // Set hid callbacks
+  usbHid.setReportCallback(nullptr, onHidSetReport);
 
   // Init device
   initDevice();
@@ -50,8 +54,8 @@ void setup() {
 
 // - Loop -
 
-void loop() {
-
+void loop()
+{
   // --- INIT ---
 
   tud_task();
@@ -70,20 +74,23 @@ void loop() {
   // --- SEND REPORT ---
 
   static uint32_t lastReportUpdate = 0;
-  if (millis() - lastReportUpdate >= POLLING_INTERVAL) {
+  if (millis() - lastReportUpdate >= POLLING_INTERVAL)
+  {
     static keyboardReport_t last_keyboard_report;
     static consumerReport_t last_controls_report;
 
     lastReportUpdate = millis();
 
     // Send keyboard report only if changed
-    if (memcmp(&keyboardReport, &last_keyboard_report, sizeof(keyboardReport)) != 0) { // Compare reports
+    if (memcmp(&keyboardReport, &last_keyboard_report, sizeof(keyboardReport)) != 0) // Compare reports
+    {
       usbHid.sendReport(1, &keyboardReport, sizeof(keyboardReport));
       last_keyboard_report = keyboardReport;
     }
     
     // Send consumer report only if changed
-    if (memcmp(&controlsReport, &last_controls_report, sizeof(controlsReport)) != 0) { // Compare reports
+    if (memcmp(&controlsReport, &last_controls_report, sizeof(controlsReport)) != 0) // Compare reports
+    {
       usbHid.sendReport(2, &controlsReport, sizeof(controlsReport));
       last_controls_report = controlsReport;
     }
@@ -98,9 +105,12 @@ void loop() {
   // --- DISPLAY ---
 
   static uint32_t lastDisplayUpdate = 0; // TODO: fare funzione per applicare millis ad una funzione o blocco di codice (?)
-  if (millis() - lastDisplayUpdate > 50) {
+  static uint32_t now = millis();
+  
+  if (now - lastDisplayUpdate > 50) // TODO: rendi 50 e 200 (in device.cpp) delle costanti (constexpr) in un file a parte
+  {
     updateDisplay();
-    lastDisplayUpdate = millis();
+    lastDisplayUpdate = now;
   }
   
 }

@@ -80,7 +80,7 @@ uint8_t const desc_hid_report[] = {
     HID_LOGICAL_MAX_N(0xFF, 2),
     HID_REPORT_SIZE(8), // 8 bits per field
     HID_REPORT_COUNT(63), // 63 Bytes
-    HID_INPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
+    HID_OUTPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
 
   HID_COLLECTION_END
 };

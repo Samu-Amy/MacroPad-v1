@@ -41,9 +41,9 @@ static const Config defaultConfig = {
       .encoderCCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_DECREMENT },
       .encoderPress = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_MUTE },
       .buttons = {
-        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_1 } },
-        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_3 } },
-        { .onPress = { ActionType::KEY, HID_KEY_NUM_LOCK, HID_KEY_KEYPAD_7 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_1 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_3 } },
+        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_7 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_1 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_2 } },
         { .onPress = { ActionType::KEY, 0, HID_KEY_3 } }
@@ -57,7 +57,8 @@ static const Config defaultConfig = {
 
 // - Memory -
 
-void saveConfig(const Config* config) {
+void saveConfig(const Config* config)
+{
   // Can only write blocks of 256 bytes
   static uint8_t buf[CONFIG_SIZE]; // TODO: usare wear leveling (magari tramite librerie)?
   memset(buf, 0xFF, sizeof(buf));
@@ -70,7 +71,8 @@ void saveConfig(const Config* config) {
   restore_interrupts(ints);
 }
 
-Config loadConfig() {
+Config loadConfig()
+{
   // Get the config from flash (copy it into a new Config (savedConfig))
   Config savedConfig;
   memcpy(&savedConfig, flashConfig, sizeof(Config));
@@ -92,7 +94,8 @@ Config loadConfig() {
 
 // - Config -
 
-static uint32_t calculateConfigCrc(const Config* config) {
+static uint32_t calculateConfigCrc(const Config* config)
+{
   // Skip the crc (start is a pointer to the memory address of the second field of config (version) (pointer to config (= start of the struct) + size of crc field (uint32_t))
   const uint8_t* start = (const uint8_t*)config + sizeof(uint32_t);
 
@@ -102,7 +105,8 @@ static uint32_t calculateConfigCrc(const Config* config) {
 
 
 // crc32 (Check data integrity)
-static uint32_t crc32(const void* data, size_t length) {
+static uint32_t crc32(const void* data, size_t length)
+{
   const uint8_t* p = (const uint8_t*)data;
   uint32_t crc = 0xFFFFFFFF;
 

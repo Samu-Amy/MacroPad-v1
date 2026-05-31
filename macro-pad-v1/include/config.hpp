@@ -9,7 +9,7 @@
 */
 
 
-// ----- DEFINITIONS -----
+// ----- CONSTANTS -----
 
 constexpr uint16_t FLASH_SIZE_BYTES = (2 * 1024 * 1024); // 2 MB (flash memory size)
 constexpr uint16_t CONFIG_SIZE = 4096; // 4 KB (multiple of 256 bytes)
@@ -41,7 +41,7 @@ struct Config {
 extern Config currentConfig;
 
 
-// ----- FUNCTION DECLARATIONS -----
+// ----- FUNCTIONS -----
 
 Config loadConfig();
 void saveConfig(const Config* config);

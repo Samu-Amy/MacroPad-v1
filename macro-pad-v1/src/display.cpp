@@ -24,7 +24,8 @@ char subprofileBuf[16];
 // - Main -
 
 // Init
-void initScreen() {
+void initScreen()
+{
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tf);
 
@@ -37,7 +38,8 @@ void initScreen() {
 }
 
 // Update
-void updateDisplay() { // TODO: aggiungi struct con dati da mostrare (oppure puntatore allo stato corrente (profilo e sottoprofilo selezionati, ecc.))
+void updateDisplay()
+{
   u8g2.clearBuffer();
   
   // - Profile -
@@ -63,20 +65,23 @@ void updateDisplay() { // TODO: aggiungi struct con dati da mostrare (oppure pun
 
 // - Utils -
 
-void updateAllDisplayBuffers() {
+void updateAllDisplayBuffers()
+{
   // Update profile buffer
   snprintf(profileBuf, sizeof(profileBuf), "%.15s", currentConfig.getActiveProfile().name); // %.15s so it only reads 15 chars (in case of missing '\0' as 16th char, it doesn't continue to read values)
 
   updateSubprofileDisplayBuffer();
 }
 
-void updateSubprofileDisplayBuffer() {
+void updateSubprofileDisplayBuffer()
+{
   // Update subprofile buffer
   snprintf(subprofileBuf, sizeof(subprofileBuf), "%.15s", currentConfig.getActiveSubprofile().name);
 
   // Update data
 }
 
-void drawCentered(u8g2_uint_t y, const char* text) {
+void drawCentered(u8g2_uint_t y, const char* text)
+{
   u8g2.drawStr(64 - u8g2.getUTF8Width(text) / 2, y + descent, text);
 }
