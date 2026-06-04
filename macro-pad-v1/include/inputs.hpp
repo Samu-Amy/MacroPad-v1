@@ -28,10 +28,10 @@ constexpr pin_size_t eClk = 6;
 constexpr pin_size_t eDt = 7;
 constexpr pin_size_t eSwitch = 8;
 
-
-// ----- VARIABLES -----
-
-extern MatrixBtn buttons[2];
+constexpr MatrixBtn buttons[2] = {
+  {0, 0},
+  {1, 1}
+};
 
 
 // ----- FUNCTIONS -----

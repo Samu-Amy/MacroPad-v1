@@ -11,11 +11,12 @@
 
 // ----- CONSTANTS -----
 
-constexpr uint16_t FLASH_SIZE_BYTES = (2 * 1024 * 1024); // 2 MB (flash memory size)
-constexpr uint16_t CONFIG_SIZE = 4096; // 4 KB (multiple of 256 bytes)
-constexpr uint16_t CONFIG_OFFSET = (FLASH_SIZE_BYTES - CONFIG_SIZE); // Last page (relative to the start of the flash memory)
+constexpr uint16_t CONFIG_SIZE = 4096; // 4 KB (must be multiple of 4KB) - can be changed (multiplying it with an integer)
 
-constexpr uint8_t CONFIG_VERSION = 1; // When changing the config structure (even PROFILE/SUBPROFILE/BUTTON _COUNT) -> change this value
+constexpr uint32_t FLASH_SIZE_BYTES = (2 * 1024 * 1024); // 2 MB (flash memory size) - depends on the microcontroller
+constexpr uint32_t CONFIG_OFFSET = (FLASH_SIZE_BYTES - CONFIG_SIZE); // Last page (relative to the start of the flash memory)
+
+constexpr uint8_t CONFIG_VERSION = 2; // Change this value the config structure changes (even [PROFILE/SUBPROFILE/BUTTON]_COUNT)
 
 
 // ----- TYPES -----

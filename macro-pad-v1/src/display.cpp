@@ -29,8 +29,8 @@ void initScreen()
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tf);
 
-  ascent = u8g2.getAscent();
-  descent = u8g2.getDescent();
+  ascent = u8g2.getAscent();    // distance from baseline to top
+  descent = u8g2.getDescent();  // distance from baseline to bottom
 
   // u8g2.drawStr(4, 8, "Loading config...");
 
@@ -43,12 +43,12 @@ void updateDisplay()
   u8g2.clearBuffer();
   
   // - Profile -
-  if (currentConfig.settings.has(SettingsFlag::DISPLAY__PROFILE_INVERTED)) {
+  if (currentConfig.settings.has(SettingsFlag::DISPLAY_PROFILE_INVERTED)) {
     // Inverted
     u8g2.drawBox(0, 0, 128, 14);
     u8g2.setDrawColor(0); // Invert color
     drawCentered(12, profileBuf);
-    u8g2.setDrawColor(1);
+    u8g2.setDrawColor(1); // Reset color
   } else {
     // Normal
     drawCentered(12, profileBuf);
@@ -59,6 +59,7 @@ void updateDisplay()
   u8g2.drawStr(4, 28, subprofileBuf);
 
   // - Data -
+  // TODO: ...
 
   u8g2.sendBuffer();
 }
@@ -79,9 +80,10 @@ void updateSubprofileDisplayBuffer()
   snprintf(subprofileBuf, sizeof(subprofileBuf), "%.15s", currentConfig.getActiveSubprofile().name);
 
   // Update data
+  // TODO: ...
 }
 
 void drawCentered(u8g2_uint_t y, const char* text)
 {
-  u8g2.drawStr(64 - u8g2.getUTF8Width(text) / 2, y + descent, text);
+  u8g2.drawStr(64 - (u8g2.getUTF8Width(text) / 2), y + descent, text);
 }

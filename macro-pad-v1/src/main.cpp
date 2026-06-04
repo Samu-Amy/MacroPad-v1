@@ -2,6 +2,7 @@
 #include <U8g2lib.h>
 #include <Wire.h>
 
+#include "generics.hpp"
 #include "device.hpp"
 #include "hid.hpp"
 #include "config.hpp"
@@ -71,28 +72,32 @@ void loop()
 
   readInputs();
 
-  // --- SEND REPORT ---
+  // --- SEND REPORTS ---
 
   static uint32_t lastReportUpdate = 0;
-  if (millis() - lastReportUpdate >= POLLING_INTERVAL)
-  {
-    static keyboardReport_t last_keyboard_report;
-    static consumerReport_t last_controls_report;
+  const uint32_t nowReport = millis();
 
-    lastReportUpdate = millis();
+  if (nowReport - lastReportUpdate >= POLLING_INTERVAL)
+  {
+    static keyboardReport_t lastKeyboardReport;
+    static consumerReport_t lastControlsReport;
+
+    lastReportUpdate = nowReport;
+
+    // TODO: risolvere caso in cui non si riesca ad inviare report "vuoto" (di rilascio tasti) dopo aver inviato quello con i dati (quindi nel caso si invii il report con i dati e dopo il polling interval si abbiano altri dati da mandare, mandando quindi quelli invece del "reset" (report "vuoto" di rilascio tasti))
 
     // Send keyboard report only if changed
-    if (memcmp(&keyboardReport, &last_keyboard_report, sizeof(keyboardReport)) != 0) // Compare reports
+    if (memcmp(&keyboardReport, &lastKeyboardReport, sizeof(keyboardReport)) != 0) // Compare reports
     {
       usbHid.sendReport(1, &keyboardReport, sizeof(keyboardReport));
-      last_keyboard_report = keyboardReport;
+      lastKeyboardReport = keyboardReport;
     }
     
     // Send consumer report only if changed
-    if (memcmp(&controlsReport, &last_controls_report, sizeof(controlsReport)) != 0) // Compare reports
+    if (memcmp(&controlsReport, &lastControlsReport, sizeof(controlsReport)) != 0) // Compare reports
     {
       usbHid.sendReport(2, &controlsReport, sizeof(controlsReport));
-      last_controls_report = controlsReport;
+      lastControlsReport = controlsReport;
     }
   }
 
@@ -105,12 +110,13 @@ void loop()
   // --- DISPLAY ---
 
   static uint32_t lastDisplayUpdate = 0; // TODO: fare funzione per applicare millis ad una funzione o blocco di codice (?)
-  static uint32_t now = millis();
+  const uint32_t nowDisplay = millis();
   
-  if (now - lastDisplayUpdate > 50) // TODO: rendi 50 e 200 (in device.cpp) delle costanti (constexpr) in un file a parte
+  if (nowDisplay - lastDisplayUpdate > DISPLAY_UPDATE_TIMEOUT)
   {
+    // Render the image
     updateDisplay();
-    lastDisplayUpdate = now;
+    lastDisplayUpdate = nowDisplay;
   }
   
 }

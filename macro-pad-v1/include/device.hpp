@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <Adafruit_TinyUSB.h>
 
 
 /*
@@ -12,6 +13,9 @@
 // TODO: rendere personalizzabili questi valori (magari definendo un valore massimo (es. CONFIG_SIZE -> 4KB) per lo spazio utilizzabile e facendo un calcolo dello spazio occupato da questi valori, dando la possibilità di "distribuire" lo spazio che occupano in profili, sottoprofili, dimensione pool e altro)
 constexpr uint8_t PROFILE_COUNT = 4;
 constexpr uint8_t SUBPROFILE_COUNT = 4;
+
+// Number of Keys that can be pressed at the same time
+constexpr uint8_t BUTTON_COUNT = 6;
 
 
 // ----- VARIABLES -----
@@ -33,9 +37,10 @@ enum class ActionType: uint8_t {
   SUBPROFILE_SWITCH
 };
 
+// The "SETTING_N" are placeholder (not used) that can be used for creating custom settings
 enum class SettingsFlag: uint8_t {
-  DISPLAY__PROFILE_INVERTED = 1 << 0, // 00000001
-  SETTING_2 = 1 << 1,                 // 00000010
+  ENSURE_NUM_LOCK = 1 << 0,           // (00000001): if active, the numlock is activated when a numpad key is pressed (default 0)
+  DISPLAY_PROFILE_INVERTED = 1 << 1,  // 00000010
   SETTING_3 = 1 << 2,                 // 00000100
   SETTING_4 = 1 << 3,                 // 00001000
   SETTING_5 = 1 << 4,                 // 00010000

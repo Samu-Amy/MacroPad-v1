@@ -14,9 +14,6 @@
 
 constexpr uint8_t POLLING_INTERVAL = 10; //ms
 
-// Number of Keys that can be pressed at the same time
-constexpr uint8_t BUTTON_COUNT = 6;
-
 
 // ----- TYPES -----
 

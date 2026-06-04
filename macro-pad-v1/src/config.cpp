@@ -6,11 +6,14 @@
 #include "device.hpp"
 
 
-// Check config size
-static_assert(sizeof(Config) <= CONFIG_SIZE, "Config too large!");
+// ----- ASSERTS -----
+
+static_assert(sizeof(Config) <= CONFIG_SIZE, "Config too large!"); // Check config size
+static_assert(CONFIG_OFFSET % FLASH_SECTOR_SIZE == 0, "CONFIG_OFFSET must be sector-aligned (multiple of 4096)!"); // Check config offset
 
 
-// - (internal) Function declarations -
+// ----- INTERNAL FUNCTION DECLARATIONS -----
+
 static uint32_t crc32(const void* data, size_t length);
 static uint32_t calculateConfigCrc(const Config* config);
 
@@ -27,7 +30,7 @@ static const Config defaultConfig = {
   .crc = 0,
   .version = CONFIG_VERSION,
   .settings = {
-    .flags = 0 //? Per settare valori: Settings::toMask(SettingsFlag::DISPLAY__PROFILE_INVERTED) | Settings::toMask(SettingsFlag::SETTING_2)
+    .flags = 0 //? Per settare valori usa bitwise OR '|' and toMask() member function: "Settings::toMask(SettingsFlag::ENSURE_NUM_LOCK) | Settings::toMask(SettingsFlag::DISPLAY_PROFILE_INVERTED)"
   },
   .deviceName = "[Macro]Pad v1",
   .activeProfile = 0,
@@ -61,7 +64,7 @@ void saveConfig(const Config* config)
 {
   // Can only write blocks of 256 bytes
   static uint8_t buf[CONFIG_SIZE]; // TODO: usare wear leveling (magari tramite librerie)?
-  memset(buf, 0xFF, sizeof(buf));
+  memset(buf, 0xFF, sizeof(buf)); // Reset buffer (set all bits to 1)
   memcpy(buf, config, sizeof(Config));
 
   // Disable interrupts while writing in flash memory (can't run code from flash while writing in it, so we need to disable interrupts because they could be called at any time)
@@ -71,14 +74,15 @@ void saveConfig(const Config* config)
   restore_interrupts(ints);
 }
 
+// Get and check the saved config, if something is wrong it overrides it with the default config
 Config loadConfig()
 {
   // Get the config from flash (copy it into a new Config (savedConfig))
   Config savedConfig;
   memcpy(&savedConfig, flashConfig, sizeof(Config));
 
-  // Validate config (if wrong crc or different version -> load default)
-  if (savedConfig.crc != calculateConfigCrc(&savedConfig) || savedConfig.version != CONFIG_VERSION) {
+  // Validate config (if different version or wrong crc -> load default)
+  if (savedConfig.version != CONFIG_VERSION || savedConfig.crc != calculateConfigCrc(&savedConfig)) {
     savedConfig = defaultConfig; // Overwrite config with default
     savedConfig.crc = calculateConfigCrc(&savedConfig); // Calculate the crc for the default config
 

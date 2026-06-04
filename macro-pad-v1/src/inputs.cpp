@@ -7,30 +7,13 @@
 
 // ----- VARIABLES -----
 
-constexpr MatrixBtn buttons[2] = {
-  {0, 0},
-  {1, 1}
-};
-
 uint8_t currentKeycodesIndex = 0; // The index at which to write the key in the report's keycodes array
 
 
-// ----- UTILS FUNCTIONS -----
+// ----- INTERNAL FUNCTION DECLARATIONS -----
 
-constexpr const ButtonBinding& getButtonAtIndex(uint8_t keymapIdx)
-{
-  return currentConfig.profiles[currentConfig.activeProfile].subprofiles[currentConfig.activeSubprofile].buttons[keymapIdx];
-}
-
-constexpr bool isNumpadKey(uint16_t keycode) {
-  if (keycode >= HID_KEY_KEYPAD_DIVIDE && keycode <= HID_KEY_KEYPAD_DECIMAL) return true;
-
-  if (keycode == HID_KEY_KEYPAD_EQUAL) return true;
-  
-  if (keycode >= HID_KEY_KEYPAD_00 && keycode <= HID_KEY_KEYPAD_HEXADECIMAL) return true;
-
-  return false;
-}
+constexpr bool isNumpadKey(uint16_t keycode);
+static const ButtonBinding& getButtonAtIndex(uint8_t keymapIdx);
 
 
 // ----- FUNCTIONS -----
@@ -39,17 +22,10 @@ constexpr bool isNumpadKey(uint16_t keycode) {
 
 void readInputs()
 {
-  uint8_t keyPressed;
-
   // Reset the index at every iteration (since the report has been reset too)
   currentKeycodesIndex = 0;
 
   // TODO: pressione di più tasti insieme (bisogna attendere un attimo per vedere se sono premuti altri tasti?)?
-
-  // if (!digitalRead(btn1)) {
-    // keyPressed = keymap[0]; // TODO: fai mappatura tasti - keymap
-    // setKeycode(keyPressed);
-  // }
 
   for (const MatrixBtn& button : buttons)
   {
@@ -58,25 +34,25 @@ void readInputs()
     {
       const ButtonBinding& buttonBinding = getButtonAtIndex(button.keymapIdx);
 
-      // Check for num lock
-      if (isNumpadKey(buttonBinding.onPress.value)) {
+      // Check for num lock (if setting is active)
+      if (currentConfig.settings.has(SettingsFlag::ENSURE_NUM_LOCK) && isNumpadKey(buttonBinding.onPress.value)) {
         ensureNumLock();
       }
 
       // Set the value in the report and increment the index
       keyboardReport.keycodes[currentKeycodesIndex++] = buttonBinding.onPress.value;
-    } // TODO: fai una cosa migliore (in base ai dati settati in config (non per forza solo keycodes))
+    } // TODO: migliora (in base ai dati settati in config (non per forza solo keycodes))
   }
 
   if (!digitalRead(eSwitch))
   {
-    currentConfig.settings.toggle(SettingsFlag::DISPLAY__PROFILE_INVERTED); // [TEST]
-  }
+    currentConfig.settings.toggle(SettingsFlag::ENSURE_NUM_LOCK);
+    }
 
-  EncoderMode encoderMode = readEncoder(); // TODO: potrebbero non servire interrupts (servono se loop più lento o si gira velocemente e non si vuole perdere nessun "giro") - non gestire logica dentro interrupt, ma solo rilevamento del cambiamento (giro)
-  if (encoderMode == EncoderMode::CW) {
+    EncoderMode encoderMode = readEncoder(); // TODO: potrebbero non servire interrupts (servono se loop più lento o si gira velocemente e non si vuole perdere nessun "giro", forse servono in speed editor, fai setting (così si possono attivare/disattivare come il check del num lock)) - non gestire logica dentro interrupt, ma solo rilevamento del cambiamento (giro)
+    if (encoderMode == EncoderMode::CW) {
 
-  }
+    }
 }
 
 
@@ -109,4 +85,23 @@ EncoderMode readEncoder() // TODO: migliora (rilevamento di ogni cambiamento, no
 
   lastClk = clk;
   return encoderVal;
+}
+
+
+// ----- INTERNAL FUNCTIONS -----
+
+constexpr bool isNumpadKey(uint16_t keycode)
+{
+  if (keycode >= HID_KEY_KEYPAD_DIVIDE && keycode <= HID_KEY_KEYPAD_DECIMAL) return true;
+
+  if (keycode == HID_KEY_KEYPAD_EQUAL) return true;
+  
+  if (keycode >= HID_KEY_KEYPAD_00 && keycode <= HID_KEY_KEYPAD_HEXADECIMAL) return true;
+
+  return false;
+}
+
+static const ButtonBinding& getButtonAtIndex(uint8_t keymapIdx)
+{
+  return currentConfig.getActiveSubprofile().buttons[keymapIdx];
 }

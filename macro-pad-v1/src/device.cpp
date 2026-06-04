@@ -2,6 +2,7 @@
 #include <Adafruit_TinyUSB.h>
 
 #include "device.hpp"
+#include "generics.hpp"
 #include "hid.hpp"
 
 
@@ -58,7 +59,7 @@ void ensureNumLock()
 
   // Wait the OS's response with the new status
   uint32_t start = millis();
-  while (!numLockActive && (millis() - start < 200)) // Timeout of 200 ms
+  while (!numLockActive && (millis() - start < HID_RESPONSE_TIMEOUT))
   {
     tud_task();
     delay(1);
