@@ -35,34 +35,6 @@ In rust:
 
 // ------------------------------------
 
-TODO: sposta in file a parte (tipo memory, config o device)
-
-void enterBootloader() {
-reset_usb_boot(0, 0);
-}
-
-void tud_hid_set_report_cb(...) {
-// dati ricevuti dal PC -> si possono usare per aggiornare la keymap (usando enterBootloader e caricando il file .uf2) o richiederla (per backup/condivisione)
-}
-
-TODO: salva il meno possibile, solo quando necessario (numero di scritture limitato)
-
-void load_config(void* config_data, size_t size) {
-memcpy(config_data, (void*)(XIP_BASE + CONFIG_OFFSET), size);
-}
-
-uint32_t crc32(const void *data, size_t length) {
-const uint8_t *p = data;
-uint32_t crc = 0xFFFFFFFF;
-for (size_t i = 0; i < length; i++) {
-crc ^= p[i];
-for (uint8_t j = 0; j < 8; j++) {
-crc = (crc >> 1) ^ (0xEDB88320 & -(crc & 1));
-}
-}
-return ~crc;
-}
-
 Default config: salvata nella RAM, se flash libera -> copia nella flash, altrimenti no (usa quella nella flash) -> per evitare overwrite delle config custom all'update del firmware
 
 flusso tipo qmk/via:

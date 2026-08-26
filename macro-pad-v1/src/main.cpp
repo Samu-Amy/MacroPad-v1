@@ -52,6 +52,7 @@ void setup()
   // TODO: invia report con dati dispositivo per la connessione con il software (ed eventualmente finché non è collegato, invia il report ogni tot tempo ed ascolta per report di "richiesta connession" inviati dal software)
 }
 
+// TODO: aggiungi #if DEBUG ... per log o altre cose (aggiungi log o qualcosa per sapere quando scrive la configurazione in memoria (schermata di "caricamento" o scritta/barra in basso sul display))
 
 // - Loop -
 

@@ -1,22 +1,19 @@
-#include <Arduino.h>
-#include <Adafruit_TinyUSB.h>
 #include "hardware/flash.h"
+#include <Adafruit_TinyUSB.h>
+#include <Arduino.h>
 
 #include "config.hpp"
 #include "device.hpp"
 
-
 // ----- ASSERTS -----
 
-static_assert(sizeof(Config) <= CONFIG_SIZE, "Config too large!"); // Check config size
+static_assert(sizeof(Config) <= CONFIG_SIZE, "Config too large!");                                                 // Check config size
 static_assert(CONFIG_OFFSET % FLASH_SECTOR_SIZE == 0, "CONFIG_OFFSET must be sector-aligned (multiple of 4096)!"); // Check config offset
-
 
 // ----- INTERNAL FUNCTION DECLARATIONS -----
 
 static uint32_t crc32(const void* data, size_t length);
 static uint32_t calculateConfigCrc(const Config* config);
-
 
 // ----- VARIABLES -----
 
@@ -27,34 +24,15 @@ static const Config* flashConfig = (const Config*)(XIP_BASE + CONFIG_OFFSET);
 
 // Default config
 static const Config defaultConfig = {
-  .crc = 0,
-  .version = CONFIG_VERSION,
-  .settings = {
-    .flags = 0 //? Per settare valori usa bitwise OR '|' and toMask() member function: "Settings::toMask(SettingsFlag::ENSURE_NUM_LOCK) | Settings::toMask(SettingsFlag::DISPLAY_PROFILE_INVERTED)"
-  },
-  .deviceName = "[Macro]Pad v1",
-  .activeProfile = 0,
-  .activeSubprofile = 0,
-  .profiles = {{
-    .name = "Blender",
-    .subprofileCount = 1,
-    .subprofiles = {{
-      .name = "Viewport",
-      .encoderCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_INCREMENT },
-      .encoderCCW = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_DECREMENT },
-      .encoderPress = { ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_MUTE },
-      .buttons = {
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_1 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_3 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_KEYPAD_7 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_1 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_2 } },
-        { .onPress = { ActionType::KEY, 0, HID_KEY_3 } }
-      }
-    }}
-  }}
-};
-
+    .crc = 0,
+    .version = CONFIG_VERSION,
+    .settings = {
+        .flags = 0 //? Per settare valori usa bitwise OR '|' and toMask() member function: "Settings::toMask(SettingsFlag::ENSURE_NUM_LOCK) | Settings::toMask(SettingsFlag::DISPLAY_PROFILE_INVERTED)"
+    },
+    .deviceName = "[Macro]Pad v1",
+    .activeProfile = 0,
+    .activeSubprofile = 0,
+    .profiles = {{.name = "Blender", .subprofileCount = 1, .subprofiles = {{.name = "Viewport", .encoderCW = {ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_INCREMENT}, .encoderCCW = {ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_VOLUME_DECREMENT}, .encoderPress = {ActionType::CONSUMER, 0, HID_USAGE_CONSUMER_MUTE}, .buttons = {{.onPress = {ActionType::KEY, 0, HID_KEY_KEYPAD_1}}, {.onPress = {ActionType::KEY, 0, HID_KEY_KEYPAD_3}}, {.onPress = {ActionType::KEY, 0, HID_KEY_KEYPAD_7}}, {.onPress = {ActionType::KEY, 0, HID_KEY_1}}, {.onPress = {ActionType::KEY, 0, HID_KEY_2}}, {.onPress = {ActionType::KEY, 0, HID_KEY_3}}}}}}}};
 
 // ----- FUNCTIONS -----
 
@@ -62,9 +40,10 @@ static const Config defaultConfig = {
 
 void saveConfig(const Config* config)
 {
+  // TODO: aggiungi log per capire quando e quanto spesso viene chiamato
   // Can only write blocks of 256 bytes
   static uint8_t buf[CONFIG_SIZE]; // TODO: usare wear leveling (magari tramite librerie)?
-  memset(buf, 0xFF, sizeof(buf)); // Reset buffer (set all bits to 1)
+  memset(buf, 0xFF, sizeof(buf));  // Reset buffer (set all bits to 1)
   memcpy(buf, config, sizeof(Config));
 
   // Disable interrupts while writing in flash memory (can't run code from flash while writing in it, so we need to disable interrupts because they could be called at any time)
@@ -82,19 +61,20 @@ Config loadConfig()
   memcpy(&savedConfig, flashConfig, sizeof(Config));
 
   // Validate config (if different version or wrong crc -> load default)
-  if (savedConfig.version != CONFIG_VERSION || savedConfig.crc != calculateConfigCrc(&savedConfig)) {
-    savedConfig = defaultConfig; // Overwrite config with default
+  if (savedConfig.version != CONFIG_VERSION || savedConfig.crc != calculateConfigCrc(&savedConfig))
+  {
+    savedConfig = defaultConfig;                        // Overwrite config with default
     savedConfig.crc = calculateConfigCrc(&savedConfig); // Calculate the crc for the default config
 
     // Save the "new" default config in memory (if not equal)
-    if (memcmp(flashConfig, &savedConfig, sizeof(Config)) != 0) {
+    if (memcmp(flashConfig, &savedConfig, sizeof(Config)) != 0)
+    {
       saveConfig(&savedConfig);
     }
   }
 
   return savedConfig;
 }
-
 
 // - Config -
 
@@ -107,17 +87,18 @@ static uint32_t calculateConfigCrc(const Config* config)
   return crc32(start, sizeof(Config) - sizeof(uint32_t));
 }
 
-
 // crc32 (Check data integrity)
 static uint32_t crc32(const void* data, size_t length)
 {
   const uint8_t* p = (const uint8_t*)data;
   uint32_t crc = 0xFFFFFFFF;
 
-  for (size_t i = 0; i < length; i++) {
+  for (size_t i = 0; i < length; i++)
+  {
     crc ^= p[i]; // XOR with current byte (aggiungi il byte al "registro di divisione", come quando nella divisione si "portano giù" nuove cifre)
 
-    for (uint8_t j = 0; j < 8; j++) { // for every bit of the current byte
+    for (uint8_t j = 0; j < 8; j++)
+    { // for every bit of the current byte
       crc = (crc >> 1) ^ (0xEDB88320 & -(crc & 1));
       // (crc >> 1) -> Shift 1 bit to the right (lose LSB)
 
