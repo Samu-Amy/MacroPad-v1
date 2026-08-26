@@ -26,4 +26,4 @@ This are the steps to do to setup the firmware (you can modify your version of t
 
 ## Notes
 
-- When something in the Config structure change (a field is moved or is created/deleted or when a const value used for the arrays is changed), you need to modify `CONFIG_VERSION' in order to be sure that the defaultConfig is loaded again after the change (the crc32 is used to check the validity of the saved config, if for some reason the value is valid even with the changes, the defaultConfig wouldn't be updated)
+- When something in the Config structure changes (a field is moved or is created/deleted or when a const value used for the arrays is changed), you need to modify `CONFIG_VERSION` in order to be sure that the defaultConfig is loaded again after the change (the crc32 is used to check the validity of the saved config. If, for some reason, the value is valid even with the changes, the defaultConfig wouldn't be updated)
