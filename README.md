@@ -16,7 +16,7 @@ The _software_ (C++) uses:
 
 ## Setup
 
-This are the steps to do to setup the firmware (you can modify the firmware to adapt it to a macropad like (or similar to) this one or your own custom device, in every case there are some things to check before uploading it in order to have a working device):
+This are the steps to do to setup the firmware (you can modify your version the firmware to adapt it to a macropad like (or similar to) this one or your own custom device, in every case there are some things to check before uploading it in order to have a working device):
 
 1. Define pins (encoder and matrix (MatrixBtn)) in `inputs.hpp`
 2. If needed, modify the u8g2 initialization in `display.cpp`
